@@ -501,3 +501,35 @@
   .gallery-grid { grid-template-columns: 1fr !important; }
   .gallery-grid > div { aspect-ratio: 4/3 !important; }
 }
+
+/* ── ONEPAGE-RAND ENTFERNEN ──
+   Onepage packt den eingebetteten Code in eigene Section-/Container-/Row-/Column-
+   Wrapper mit Padding, Margin und max-width. :has(#mainNav) trifft genau diese
+   Vorfahren-Elemente (und nur sie) und setzt sie auf volle Breite ohne Abstand. */
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
+
+:has(> * #mainNav), :has(> #mainNav) {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  gap: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transform: none !important;   /* sonst funktioniert position:fixed der Navigation nicht */
+  filter: none !important;
+  overflow: visible !important;
+}
+:has(> * #mainNav)::before, :has(> * #mainNav)::after,
+:has(> #mainNav)::before, :has(> #mainNav)::after { display: none !important; }
+
+/* Fallback für Browser ohne :has(): Sektionen aus dem Container "herausbrechen" */
+@supports not selector(:has(*)) {
+  .hero, .marquee-section, section, .quote-section, footer {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+}
