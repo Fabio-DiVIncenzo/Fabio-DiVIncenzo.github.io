@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v21.0/PIXEL_ID_HIER/events",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "ACCESS_TOKEN_HIER"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const b = $json.body || {};\n  const h = $json.headers || {};\n  const clean = o => Object.fromEntries(Object.entries(o).filter(([k, v]) => v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && v.length === 0)));\n  const sha = v => v ? [String(v).trim().toLowerCase().hash('sha256')] : [];\n  const parts = String(b.name || '').trim().split(/\\s+/);\n  const phone = String(b.telefon || '').replace(/\\D/g, '').replace(/^00/, '').replace(/^0/, '49');\n  const ip = String(h['x-forwarded-for'] || h['x-real-ip'] || '').split(',')[0].trim();\n  return JSON.stringify({\n    data: [clean({\n      event_name: 'Lead',\n      event_time: Number(b.event_time) || Math.floor(Date.now() / 1000),\n      event_id: b.event_id,\n      action_source: 'website',\n      event_source_url: b.event_source_url,\n      user_data: clean({\n        em: sha(b.email),\n        ph: phone ? [phone.hash('sha256')] : [],\n        fn: sha(parts[0]),\n        ln: sha(parts.length > 1 ? parts.slice(1).join(' ') : ''),\n        ct: sha('frankfurt'),\n        country: sha('de'),\n        external_id: sha(b.email),\n        client_ip_address: ip,\n        client_user_agent: b.user_agent || h['user-agent'],\n        fbc: b.fbc,\n        fbp: b.fbp\n      }),\n      custom_data: clean({\n        content_name: 'Rebuilding Mom & Dad',\n        lead_type: b.anfrage_fuer,\n        standort: b.standort,\n        alter: b.alter,\n        utm_source: b.utm_source,\n        utm_medium: b.utm_medium,\n        utm_campaign: b.utm_campaign,\n        utm_content: b.utm_content,\n        utm_term: b.utm_term\n      })\n    })]\n  });\n})() }}",
+        "options": {}
+      },
+      "name": "Meta Conversions API (Lead)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        500
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {}
+}
